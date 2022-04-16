@@ -2,6 +2,10 @@
 Anzaker, a hacking multi-tool made in Python 3.10 by Anz!
 
 I will keep updating this tool, so I will always be fixing any bugs, add new tools here etc.
+I have tested this tool on all operating systems and it works well and same on all operating systems.
+This is a proper multi-tool so you can keep going back and forth using all the tools like a normal GUI software.
+
+If there is any bug or issue then go to issues and post there.
 
 DISCLAIMER: I am not responsible with your illegal intentions with this so please don't use this on someone explicitly without their permission.
 
@@ -36,3 +40,12 @@ Third Party Modules:
 - colorama
 - paramiko
 - requests
+
+# Installation & Usage
+
+1. Just clone this repo:
+        - git clone https://github.com/Anz1x/Anzaker
+2. Install all the necessary third party modules:
+        - pip3 install -r requirements.txt
+3. Run the program:
+        - python3 main.py         
