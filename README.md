@@ -30,7 +30,7 @@ Requirements:
 - Python 3.10 at least installed on your system and on your path
 - A brain (jk however at this point you should at least know what to do)
 
-Modules:
+Third Party Modules:
 - scapy
 - ipy
 - colorama
