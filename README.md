@@ -1,4 +1,7 @@
 # Anzaker
+
+![image](https://user-images.githubusercontent.com/50573902/163672047-a69aa6ab-dc92-461f-a2cf-979bb73adcc8.png)
+
 Anzaker, a hacking multi-tool made in Python 3.10 by Anz!
 
 I will keep updating this tool, so I will always be fixing any bugs, add new tools here etc.
