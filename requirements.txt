@@ -1,0 +1,5 @@
+scapy
+ipy
+colorama
+paramiko
+requests
