@@ -1,6 +1,6 @@
 # Anzaker
 
-![image](https://user-images.githubusercontent.com/50573902/163672047-a69aa6ab-dc92-461f-a2cf-979bb73adcc8.png)
+![image](https://user-images.githubusercontent.com/50573902/163697333-5de9efff-e2b4-494f-8bba-c359e1a7aee5.png)
 
 Anzaker, a hacking multi-tool made in Python 3.10 by Anz!
 
