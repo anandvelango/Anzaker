@@ -79,7 +79,7 @@ def header():
 
 """ + Fore.RED + """[>]""" + Fore.LIGHTGREEN_EX + """ Anzaker (Hacking multi-tool) made by Anz
 """ + Fore.RED + """[>]""" + Fore.LIGHTGREEN_EX + """ Github: https://github.com/Anz1x """ + Fore.RESET + """
-_________________________________________________________
+________________________________________________________________
     """)
 
     print(Fore.RED + """[1] """ + Fore.LIGHTGREEN_EX + """Port Scanner """ + Fore.RED + """                 [6] """ + Fore.LIGHTGREEN_EX + """Arp Spoofer
@@ -89,7 +89,7 @@ _________________________________________________________
 """ + Fore.RED + """[5] """ + Fore.LIGHTGREEN_EX + """Get Info of an IP Address """ + Fore.RED + """    [Exit] """ + Fore.LIGHTGREEN_EX + """Exit the program"""
 )
 
-    print("_________________________________________________________\n")
+    print("________________________________________________________________\n")
 
     response = input(Fore.GREEN + "[>>>] " + Fore.RED)
 
