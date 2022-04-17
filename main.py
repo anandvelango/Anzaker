@@ -73,21 +73,19 @@ def header():
 
 """ + Fore.RED + """[>]""" + Fore.LIGHTGREEN_EX + """ Anzaker (Hacking multi-tool) made by Anz
 """ + Fore.RED + """[>]""" + Fore.LIGHTGREEN_EX + """ Github: https://github.com/Anz1x """ + Fore.RESET + """
-____________________________________________________
+_________________________________________________________
     """)
 
-    print(Fore.RED + """[1] """ + Fore.LIGHTGREEN_EX + """Port Scanner
-""" + Fore.RED + """[2] """ + Fore.LIGHTGREEN_EX + """SSH Bruteforce (BUGGY)
-""" + Fore.RED + """[3] """ + Fore.LIGHTGREEN_EX + """Vulnerability Scanner (NOT FINISHED)
+    print(Fore.RED + """[1] """ + Fore.LIGHTGREEN_EX + """Port Scanner """ + Fore.RED + """                 [6] """ + Fore.LIGHTGREEN_EX + """Arp Spoofer
+""" + Fore.RED + """[2] """ + Fore.LIGHTGREEN_EX + """SSH Bruteforce (BUGGY) """ + Fore.RED + """       [7] """ + Fore.LIGHTGREEN_EX + """Password Sniffer
+""" + Fore.RED + """[3] """ + Fore.LIGHTGREEN_EX + """Vulnerability Scanner """ + Fore.RED + """        [8] """ + Fore.LIGHTGREEN_EX + """Credits
 """ + Fore.RED + """[4] """ + Fore.LIGHTGREEN_EX + """FTP Anonymous Login
-""" + Fore.RED + """[5] """ + Fore.LIGHTGREEN_EX + """Get Information of an IP Address
-""" + Fore.RED + """[6] """ + Fore.LIGHTGREEN_EX + """Arp Spoofer
-""" + Fore.RED + """[7] """ + Fore.LIGHTGREEN_EX + """Password Sniffer
-""" + Fore.RED + """[8] """ + Fore.LIGHTGREEN_EX + """Credits
+""" + Fore.RED + """[5] """ + Fore.LIGHTGREEN_EX + """Get Info of an IP Address """ + Fore.RED + """    [Exit] """ + Fore.LIGHTGREEN_EX + """Exit the program"""
+)
 
 """ + Fore.RED + """[Exit] """ + Fore.LIGHTGREEN_EX + """Exit the program""")
 
-    print("____________________________________________________\n")
+    print("_________________________________________________________\n")
 
     response = input(Fore.GREEN + "[>>>] " + Fore.RED)
 
