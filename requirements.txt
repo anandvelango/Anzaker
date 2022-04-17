@@ -3,3 +3,5 @@ ipy
 colorama
 paramiko
 requests
+opencage
+phonenumbers
