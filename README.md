@@ -23,7 +23,8 @@ This hacking multi-tool does a lot of stuff revolved around hacking, OSINT & mor
 - Get Information of an IP Address
 - Arp Spoofer
 - Password Sniffer
-- Get Information of a Phone Number
+- Get Information on a Phone Number
+- Password Cracker
 
 I will keep adding new tools to this multi-tool!
 
