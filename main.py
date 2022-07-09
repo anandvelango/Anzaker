@@ -35,6 +35,8 @@ import json
 import ports
 import sys
 import ftplib
+import hashlib
+import psutil
 import phonenumbers
 import scapy.all as scapy
 
@@ -84,9 +86,10 @@ ________________________________________________________________
 
     print(Fore.RED + """[1] """ + Fore.LIGHTGREEN_EX + """Port Scanner """ + Fore.RED + """                 [6] """ + Fore.LIGHTGREEN_EX + """Arp Spoofer
 """ + Fore.RED + """[2] """ + Fore.LIGHTGREEN_EX + """SSH Bruteforce (BUGGY) """ + Fore.RED + """       [7] """ + Fore.LIGHTGREEN_EX + """Password Sniffer
-""" + Fore.RED + """[3] """ + Fore.LIGHTGREEN_EX + """Vulnerability Scanner """ + Fore.RED + """        [8] """ + Fore.LIGHTGREEN_EX + """Get Info of a Phone Number
-""" + Fore.RED + """[4] """ + Fore.LIGHTGREEN_EX + """FTP Anonymous Login """ + Fore.RED + """          [9] """ + Fore.LIGHTGREEN_EX + """Credits      
-""" + Fore.RED + """[5] """ + Fore.LIGHTGREEN_EX + """Get Info of an IP Address """ + Fore.RED + """    [Exit] """ + Fore.LIGHTGREEN_EX + """Exit the program"""
+""" + Fore.RED + """[3] """ + Fore.LIGHTGREEN_EX + """Vulnerability Scanner """ + Fore.RED + """        [8] """ + Fore.LIGHTGREEN_EX + """Get Info on a Phone Number
+""" + Fore.RED + """[4] """ + Fore.LIGHTGREEN_EX + """FTP Anonymous Login """ + Fore.RED + """          [9] """ + Fore.LIGHTGREEN_EX + """Password Cracker      
+""" + Fore.RED + """[5] """ + Fore.LIGHTGREEN_EX + """Get Info of an IP Address """ + Fore.RED + """    [10] """ + Fore.LIGHTGREEN_EX + """Credits
+""" + Fore.RED + """[q] """ + Fore.LIGHTGREEN_EX + """Exit the program"""
 )
 
     print("________________________________________________________________\n")
@@ -118,9 +121,12 @@ ________________________________________________________________
         phonenumber_scanner()
 
     if response == "9":
+        password_cracker()
+
+    if response == "10":
         credits()
 
-    if response == "exit":
+    if response == "exit" or response == "q":
 
         clear()
 
@@ -676,6 +682,70 @@ ________________________________________________________________________________
         if exit == "":
             header()
 
+# Phone number scanner
+def password_cracker():
+
+    clear()
+
+    print(f"""
+{Fore.LIGHTGREEN_EX}╔═╗┌─┐┌─┐┌─┐┬ ┬┌─┐┬─┐┌┬┐  ╔═╗┬─┐┌─┐┌─┐┬┌─┌─┐┬─┐
+╠═╝├─┤└─┐└─┐││││ │├┬┘ ││  ║  ├┬┘├─┤│  ├┴┐├┤ ├┬┘
+╩  ┴ ┴└─┘└─┘└┴┘└─┘┴└──┴┘  ╚═╝┴└─┴ ┴└─┘┴ ┴└─┘┴└─
+{Fore.RESET}===============================================
+    """)
+
+    time.sleep(1)
+
+    hash_alg = str(input(f"{Fore.LIGHTGREEN_EX}[+]{Fore.LIGHTYELLOW_EX} Hash Algorithm ({Fore.LIGHTGREEN_EX}MD5{Fore.LIGHTYELLOW_EX}, {Fore.LIGHTGREEN_EX}SHA-1{Fore.LIGHTYELLOW_EX}, {Fore.LIGHTGREEN_EX}SHA256 {Fore.LIGHTYELLOW_EX}are supported): " + Fore.LIGHTGREEN_EX))
+    passwd_list = str(input(f"{Fore.LIGHTGREEN_EX}[+]{Fore.LIGHTYELLOW_EX} Path to Password file: " + Fore.LIGHTGREEN_EX))
+
+    if os.path.exists(passwd_list) == False:
+        print(Fore.RED + "[-] Unable to locate the file/path")
+        sleep(1)
+        exit = str(input("\n" + Fore.GREEN + "[>] " + Fore.RESET + "Press Enter to exit: "))
+
+        if exit == "":
+            header()
+
+    hashed_passwd = str(input(f"{Fore.LIGHTGREEN_EX}[+]{Fore.LIGHTYELLOW_EX} Hashed Password: " + Fore.LIGHTGREEN_EX))
+
+    with open(passwd_list, "r") as file:
+        for line in file.readlines():
+            # MD5
+            if hash_alg == "md5" or hash_alg == "MD5":
+                hash_obj = hashlib.md5(line.strip().encode('utf-8'))
+                password = hash_obj.hexdigest()
+                if password == hashed_passwd:
+                    print(f"\n{Fore.LIGHTGREEN_EX}[+]{Fore.LIGHTYELLOW_EX} Found the MD5 Password: {Fore.LIGHTGREEN_EX + line.strip()}")
+                    sleep(1)
+                    exit = str(input("\n" + Fore.GREEN + "[>] " + Fore.RESET + "Press Enter to exit: "))
+
+                    if exit == "":
+                        header()
+
+            # SHA-1        
+            if hash_alg == "sha1" or hash_alg == "SHA1" or hash_alg == "SHA-1" or hash_alg == "sha-1":
+                hash_obj = hashlib.sha1(line.strip().encode('utf-8'))
+                password = hash_obj.hexdigest()
+                if password == hashed_passwd:
+                    print(f"\n{Fore.LIGHTGREEN_EX}[+]{Fore.LIGHTYELLOW_EX} Found the SHA-1 Password: {Fore.LIGHTGREEN_EX + line.strip()}")
+                    sleep(1)
+                    exit = str(input("\n" + Fore.GREEN + "[>] " + Fore.RESET + "Press Enter to exit: "))
+
+                    if exit == "":
+                        header()
+                        
+            # SHA256       
+            if hash_alg == "sha256" or hash_alg == "SHA256":
+                hash_obj = hashlib.sha256(line.strip().encode('utf-8'))
+                password = hash_obj.hexdigest()
+                if password == hashed_passwd:
+                    print(f"\n{Fore.LIGHTGREEN_EX}[+]{Fore.LIGHTYELLOW_EX} Found the SHA256 Password: {Fore.LIGHTGREEN_EX + line.strip()}")
+                    sleep(1)
+                    exit = str(input("\n" + Fore.GREEN + "[>] " + Fore.RESET + "Press Enter to exit: "))
+
+                    if exit == "":
+                        header()
 # Credits
 def credits():
 
