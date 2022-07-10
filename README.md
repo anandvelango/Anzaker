@@ -49,10 +49,10 @@ Third Party Modules:
 # Installation & Usage
 
 **1. Just clone this repo:**
-        git clone https://github.com/Anz1x/Anzaker
+        ```git clone https://github.com/Anz1x/Anzaker```
         
 **2. Install all the necessary third party modules:**
-        pip3 install -r requirements.txt
+        ```pip3 install -r requirements.txt```
         
 **3. Run the program:**
-        python3 main.py         
+        ```python3 main.py```        
