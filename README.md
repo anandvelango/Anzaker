@@ -25,6 +25,7 @@ This hacking multi-tool does a lot of stuff revolved around hacking, OSINT & mor
 - Password Sniffer
 - Get Information on a Phone Number
 - Password Cracker
+- Email Scraper
 
 I will keep adding new tools to this multi-tool!
 
