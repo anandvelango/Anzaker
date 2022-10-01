@@ -21,6 +21,8 @@ from phonenumbers import geocoder, carrier, timezone
 from phonenumbers.phonenumberutil import number_type
 from opencage import geocoder as geolocator
 from opencage.geocoder import OpenCageGeocode
+from bs4 import BeautifulSoup
+from collections import deque
 
 import socket
 import os
@@ -39,6 +41,8 @@ import hashlib
 import psutil
 import phonenumbers
 import scapy.all as scapy
+import requests.exceptions
+import urllib.parse
 
 now = datetime.now()
 
@@ -88,9 +92,8 @@ ________________________________________________________________
 """ + Fore.RED + """[2] """ + Fore.LIGHTGREEN_EX + """SSH Bruteforce (BUGGY) """ + Fore.RED + """       [7] """ + Fore.LIGHTGREEN_EX + """Password Sniffer
 """ + Fore.RED + """[3] """ + Fore.LIGHTGREEN_EX + """Vulnerability Scanner """ + Fore.RED + """        [8] """ + Fore.LIGHTGREEN_EX + """Get Info on a Phone Number
 """ + Fore.RED + """[4] """ + Fore.LIGHTGREEN_EX + """FTP Anonymous Login """ + Fore.RED + """          [9] """ + Fore.LIGHTGREEN_EX + """Password Cracker      
-""" + Fore.RED + """[5] """ + Fore.LIGHTGREEN_EX + """Get Info of an IP Address """ + Fore.RED + """    [10] """ + Fore.LIGHTGREEN_EX + """Credits
-""" + Fore.RED + """[q] """ + Fore.LIGHTGREEN_EX + """Exit the program"""
-)
+""" + Fore.RED + """[5] """ + Fore.LIGHTGREEN_EX + """Get Info of an IP Address """ + Fore.RED + """    [10] """ + Fore.LIGHTGREEN_EX + """Email Scraper
+""" + Fore.RED + """[q] """ + Fore.LIGHTGREEN_EX + """Exit the Program""" + Fore.RED + """              [11] """ + Fore.LIGHTGREEN_EX + """Credits """)
 
     print("________________________________________________________________\n")
 
@@ -122,8 +125,11 @@ ________________________________________________________________
 
     if response == "9":
         password_cracker()
-
+        
     if response == "10":
+        email_scraper()
+
+    if response == "11":
         credits()
 
     if response == "exit" or response == "q":
@@ -682,7 +688,7 @@ ________________________________________________________________________________
         if exit == "":
             header()
 
-# Phone number scanner
+# Password Cracker
 def password_cracker():
 
     clear()
@@ -746,6 +752,96 @@ def password_cracker():
 
                     if exit == "":
                         header()
+
+# Email Scraper                        
+def email_scraper():
+
+    clear()
+
+    
+    print(f"""{Fore.LIGHTCYAN_EX} 
+╔═══╗──────╔╗─╔═══╗
+║╔══╝──────║║─║╔═╗║
+║╚══╦╗╔╦══╦╣║─║╚══╦══╦═╦══╦══╦══╦═╗
+║╔══╣╚╝║╔╗╠╣║─╚══╗║╔═╣╔╣╔╗║╔╗║║═╣╔╝
+║╚══╣║║║╔╗║║╚╗║╚═╝║╚═╣║║╔╗║╚╝║║═╣║
+╚═══╩╩╩╩╝╚╩╩═╝╚═══╩══╩╝╚╝╚╣╔═╩══╩╝
+──────────────────────────║║
+──────────────────────────╚╝
+{Fore.RESET}===================================
+          """)
+
+    target = str(input("[+] URL: "))
+    print("\n")
+    urls = deque([target])
+
+    scraped_urls = set()
+    emails = set()
+
+    count = 0
+
+    try:
+        while len(urls):
+
+            count += 1
+            if count == 100:
+                break
+
+            url = urls.popleft()
+            scraped_urls.add(url)
+
+
+            parts = urllib.parse.urlsplit(url)
+            base_url = "{0.scheme}://{0.netloc}".format(parts)
+
+
+            path = url[:url.rfind("/")+1] if "/" in parts.path else url
+
+
+            print("[%d] Processing %s" % (count, url))
+
+
+            try:
+                response = requests.get(url)
+
+            except (requests.exceptions.MissingSchema, requests.exceptions.ConnectionError):
+                continue
+
+
+            new_emails = set(re.findall(r"[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+", response.text, re.I))
+            emails.update(new_emails)
+
+
+            soup = BeautifulSoup(response.text, features="lxml")
+
+
+            for anchor in soup.find_all("a"):
+                link = anchor.attrs["href"] if "href" in anchor.attrs else ""
+                if link.startswith("/"):
+                    link = base_url + link
+                elif not link.startswith("http"):
+                    link = path + link
+                if not link in urls and not link in scraped_urls:
+                    urls.append(link)
+
+
+
+    except KeyboardInterrupt:
+        print("[-] Exited the program")
+
+    print("\n")
+
+    print(Fore.LIGHTGREEN_EX + "[!] Found Emails")
+
+    for mail in emails:
+        print(f"[+] {mail}")                        
+
+    sleep(1)
+    exit = str(input("\n" + Fore.GREEN + "[>] " + Fore.RESET + "Press Enter to exit: "))
+
+    if exit == "":
+        header()
+    
 # Credits
 def credits():
 
