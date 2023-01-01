@@ -88,7 +88,7 @@ ________________________________________________________________
 """ + Fore.RED + """[2] """ + Fore.LIGHTGREEN_EX + """SSH Bruteforce (BUGGY) """ + Fore.RED + """       [7] """ + Fore.LIGHTGREEN_EX + """Password Sniffer
 """ + Fore.RED + """[3] """ + Fore.LIGHTGREEN_EX + """Vulnerability Scanner """ + Fore.RED + """        [8] """ + Fore.LIGHTGREEN_EX + """Get Info of a Phone Number
 """ + Fore.RED + """[4] """ + Fore.LIGHTGREEN_EX + """FTP Anonymous Login """ + Fore.RED + """          [9] """ + Fore.LIGHTGREEN_EX + """Credits      
-""" + Fore.RED + """[5] """ + Fore.LIGHTGREEN_EX + """Get Info of an IP Address """ + Fore.RED + """    [Exit] """ + Fore.LIGHTGREEN_EX + """Exit the program"""
+""" + Fore.RED + """[5] """ + Fore.LIGHTGREEN_EX + """Get Info of an IP Address """ + Fore.RED + """    [q] """ + Fore.LIGHTGREEN_EX + """Exit the program"""
 )
 
     print("________________________________________________________________\n")
@@ -128,7 +128,7 @@ ________________________________________________________________
 
         sys.exit(0)
 
-    elif response == "Exit":
+    elif response == "q":
 
         clear()
 
