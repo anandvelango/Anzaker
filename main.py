@@ -11,6 +11,7 @@
 #
 # I will keep updating this tool so I will always be fixing any bugs and adding new tools here etc.
 
+# Modules
 from scapy.all import *
 from IPy import IP
 from urllib import parse
@@ -21,8 +22,6 @@ from phonenumbers import geocoder, carrier, timezone
 from phonenumbers.phonenumberutil import number_type
 from opencage import geocoder as geolocator
 from opencage.geocoder import OpenCageGeocode
-from bs4 import BeautifulSoup
-from collections import deque
 
 import socket
 import os
@@ -30,6 +29,7 @@ import time
 import logging
 import colorama
 import re
+import queue
 import paramiko
 import threading
 import requests
@@ -37,12 +37,8 @@ import json
 import ports
 import sys
 import ftplib
-import hashlib
-import psutil
 import phonenumbers
 import scapy.all as scapy
-import requests.exceptions
-import urllib.parse
 
 now = datetime.now()
 
@@ -90,10 +86,10 @@ ________________________________________________________________
 
     print(Fore.RED + """[1] """ + Fore.LIGHTGREEN_EX + """Port Scanner """ + Fore.RED + """                 [6] """ + Fore.LIGHTGREEN_EX + """Arp Spoofer
 """ + Fore.RED + """[2] """ + Fore.LIGHTGREEN_EX + """SSH Bruteforce (BUGGY) """ + Fore.RED + """       [7] """ + Fore.LIGHTGREEN_EX + """Password Sniffer
-""" + Fore.RED + """[3] """ + Fore.LIGHTGREEN_EX + """Vulnerability Scanner """ + Fore.RED + """        [8] """ + Fore.LIGHTGREEN_EX + """Get Info on a Phone Number
-""" + Fore.RED + """[4] """ + Fore.LIGHTGREEN_EX + """FTP Anonymous Login """ + Fore.RED + """          [9] """ + Fore.LIGHTGREEN_EX + """Password Cracker      
-""" + Fore.RED + """[5] """ + Fore.LIGHTGREEN_EX + """Get Info of an IP Address """ + Fore.RED + """    [10] """ + Fore.LIGHTGREEN_EX + """Email Scraper
-""" + Fore.RED + """[q] """ + Fore.LIGHTGREEN_EX + """Exit the Program""" + Fore.RED + """              [11] """ + Fore.LIGHTGREEN_EX + """Credits """)
+""" + Fore.RED + """[3] """ + Fore.LIGHTGREEN_EX + """Vulnerability Scanner """ + Fore.RED + """        [8] """ + Fore.LIGHTGREEN_EX + """Get Info of a Phone Number
+""" + Fore.RED + """[4] """ + Fore.LIGHTGREEN_EX + """FTP Anonymous Login """ + Fore.RED + """          [9] """ + Fore.LIGHTGREEN_EX + """Credits      
+""" + Fore.RED + """[5] """ + Fore.LIGHTGREEN_EX + """Get Info of an IP Address """ + Fore.RED + """    [Exit] """ + Fore.LIGHTGREEN_EX + """Exit the program"""
+)
 
     print("________________________________________________________________\n")
 
@@ -124,15 +120,9 @@ ________________________________________________________________
         phonenumber_scanner()
 
     if response == "9":
-        password_cracker()
-        
-    if response == "10":
-        email_scraper()
-
-    if response == "11":
         credits()
 
-    if response == "exit" or response == "q":
+    if response == "exit":
 
         clear()
 
@@ -160,63 +150,127 @@ def portscanner():
 
     clear()
 
+
     print(Fore.GREEN + """
 
-▒█▀▀█ █▀▀█ █▀▀█ ▀▀█▀▀ 　 ▒█▀▀▀█ █▀▀ █▀▀█ █▀▀▄ █▀▀▄ █▀▀ █▀▀█ 
-▒█▄▄█ █░░█ █▄▄▀ ░░█░░ 　 ░▀▀▀▄▄ █░░ █▄▄█ █░░█ █░░█ █▀▀ █▄▄▀ 
-▒█░░░ ▀▀▀▀ ▀░▀▀ ░░▀░░ 　 ▒█▄▄▄█ ▀▀▀ ▀░░▀ ▀░░▀ ▀░░▀ ▀▀▀ ▀░▀▀
 
-""" + Fore.RED +"""[>] """ + Fore.GREEN + """When scanning multiple targets make sure to split the targets with a ',' """ + Fore.RESET + """
-_________________________________________________________________________
-    """)
-    sleep(0.75)
+╔═╗┌─┐┬─┐┌┬┐  ╔═╗┌─┐┌─┐┌┐┌┌┐┌┌─┐┬─┐
+╠═╝│ │├┬┘ │   ╚═╗│  ├─┤││││││├┤ ├┬┘
+╩  └─┘┴└─ ┴   ╚═╝└─┘┴ ┴┘└┘┘└┘└─┘┴└─
 
-    def scan(target):
-        converted_ip = check_ip(target)
+    """ + Fore.RESET + """
+========================================================""")
 
-        print(Fore.RESET + "_________________________________________________________________________")
-        logging.info(Fore.RED + "\n" + "[-] Starting the scan on " + str(target) + " at")
-        for port in range(10, 500):
-            port_scan(converted_ip, port)
+    colorama.init(autoreset=True)
+    date = datetime.now()
+    q = queue.Queue()
+    lock = threading.Lock()
+    port_list = []
 
-    def check_ip(ip):
-        try:
-            IP(ip)
-            return ip
-        except ValueError:
-            return socket.gethostbyname(ip)
-
-    def get_banner(s):
+    # grabbing the banner
+    def grab_banner(s):
         return s.recv(1024)
 
-    def port_scan(ip_address, port):
+    # scanning the host for ports
+    def port_scan(host, port):
         try:
-            s = socket.socket()
-            s.settimeout(0.75)
-            s.connect((ip_address, port))
+            s = socket.socket(socket.AF_INET)
+            s.settimeout(0.5)          
+            connection = s.connect((host, port))
+
             try:
-                banner = get_banner(s)
-                print(Fore.GREEN + "\n[+] Open Port: %s | Banner Results: %s" % (port, banner.decode().strip("\n")))
+                banner = grab_banner(s)
+
+                with lock:
+                    print(f"{Fore.GREEN}[+]{Fore.RESET} Open Port: %s : %s" % (port, banner.decode().strip("\n")))
+                    port_list.append(port)
+
+                connection.close()
+
             except:
-                print(Fore.GREEN + "\n[+] Open Port: %s" % (port))
+
+                with lock:
+                    print(f"{Fore.GREEN}[+]{Fore.RESET} Open Port: %s" % (port))
+                    port_list.append(port)
+
+                connection.close()
         except:
             pass
 
-    targets = str(input(Fore.RED + "[+] Target(s) (google.com, 192.168.1.1 etc): " + Fore.YELLOW))
-    if "," in targets:
-        for ip_addr in targets.split(","):
-            scan(ip_addr.strip(""))
-    else:
-        scan(targets)
+    # threading, h = host
+    def thread(h): # h = host
+        while True:
+            port_to_scan = q.get()
+            port_scan(h, port_to_scan)
+            q.task_done()
 
-    print("_________________________________________________________________________")
-    logging.info(Fore.RED + "\n[-] Scan completed for %s at" % (targets))
+    # main function
+    def main():
+        target = input(f"{Fore.LIGHTYELLOW_EX}[+]{Fore.RESET} Target (e.g. google.com, 192.168.1.1): ")
+        num_ports = int(input(f"{Fore.LIGHTYELLOW_EX}[+]{Fore.RESET} Max Port Range (e.g. 1024): "))
+        num_threads = int(input(f"{Fore.LIGHTYELLOW_EX}[+]{Fore.RESET} Threads (100-200 recommended): "))
 
-    sleep(1)
-    exit = str(input("\n" + Fore.GREEN + "[>] " + Fore.RESET + "Press Enter to exit: "))
+        print("--------------------------------------------------------")
+        print(f"{Fore.LIGHTYELLOW_EX}[+]{Fore.RESET} Scanning {target} at %s" % (date.strftime("%Y-%m-%d %H:%M")))
+        print(f"{Fore.LIGHTYELLOW_EX}[>]{Fore.RESET} Press CTRL+C to cancel the program")
+        print("--------------------------------------------------------")
 
-    if exit == "":
-        header()
+        host = socket.gethostbyname(target)
+        start_duration = time.time()
+
+        for x in range(num_threads):
+            t = threading.Thread(target=thread, args=(host,))
+            t.daemon = True
+
+            t.start()
+
+        for ports in range(1, num_ports):
+            q.put(ports)
+
+        q.join()
+
+        duration = float("%0.2f" % (time.time() - start_duration))
+
+        print("--------------------------------------------------------")
+        print(f"{Fore.LIGHTYELLOW_EX}[+]{Fore.RESET} Scanning {Fore.LIGHTYELLOW_EX+target+Fore.RESET} completed at %s" % (date.strftime("%Y-%m-%d %H:%M")))
+        print(f"{Fore.LIGHTYELLOW_EX}[>]{Fore.RESET} Total duration: {duration}s")
+        print(f"{Fore.LIGHTYELLOW_EX}[>]{Fore.RESET} {len(port_list)} open port(s) found")
+        print("--------------------------------------------------------")
+        results = input(f"{Fore.LIGHTYELLOW_EX}[+]{Fore.RESET} Write the port scan results to a file(y/n)?: ")
+        if results == "n":
+            print("========================================================")
+        elif results == "y":
+            file = input(f"{Fore.LIGHTYELLOW_EX}[+]{Fore.RESET} File name (<file>.txt): ")   
+            with open(file, "w") as f:
+                f.write(f"""Target: {target}
+    Threads used: {num_threads}
+    Ports scanned: 1-{num_ports}
+    Scan duration: {duration}
+
+    Open ports: {port_list}
+    """)
+            print(f"{Fore.LIGHTYELLOW_EX}[+]{Fore.RESET} Wrote the results in {Fore.LIGHTYELLOW_EX+file}")
+            print("========================================================")
+
+        else:
+            pass
+            print("========================================================")
+
+    if __name__ == "__main__":
+        try:
+            main()
+        except KeyboardInterrupt:
+            print(f"\n{Fore.LIGHTRED_EX}[-]{Fore.RESET} Program stopped")
+            sleep(1)
+            exit = str(input("\n" + Fore.GREEN + "[>] " + Fore.RESET + "Press Enter to exit: "))
+
+
+
+        sleep(1)
+        exit = str(input("\n" + Fore.GREEN + "[>] " + Fore.RESET + "Press Enter to exit: "))
+
+        if exit == "":
+            header()
 
 # SSH Bruteforce
 def sshbruteforce():
@@ -688,160 +742,6 @@ ________________________________________________________________________________
         if exit == "":
             header()
 
-# Password Cracker
-def password_cracker():
-
-    clear()
-
-    print(f"""
-{Fore.LIGHTGREEN_EX}╔═╗┌─┐┌─┐┌─┐┬ ┬┌─┐┬─┐┌┬┐  ╔═╗┬─┐┌─┐┌─┐┬┌─┌─┐┬─┐
-╠═╝├─┤└─┐└─┐││││ │├┬┘ ││  ║  ├┬┘├─┤│  ├┴┐├┤ ├┬┘
-╩  ┴ ┴└─┘└─┘└┴┘└─┘┴└──┴┘  ╚═╝┴└─┴ ┴└─┘┴ ┴└─┘┴└─
-{Fore.RESET}===============================================
-    """)
-
-    time.sleep(1)
-
-    hash_alg = str(input(f"{Fore.LIGHTGREEN_EX}[+]{Fore.LIGHTYELLOW_EX} Hash Algorithm ({Fore.LIGHTGREEN_EX}MD5{Fore.LIGHTYELLOW_EX}, {Fore.LIGHTGREEN_EX}SHA-1{Fore.LIGHTYELLOW_EX}, {Fore.LIGHTGREEN_EX}SHA256 {Fore.LIGHTYELLOW_EX}are supported): " + Fore.LIGHTGREEN_EX))
-    passwd_list = str(input(f"{Fore.LIGHTGREEN_EX}[+]{Fore.LIGHTYELLOW_EX} Path to Password file: " + Fore.LIGHTGREEN_EX))
-
-    if os.path.exists(passwd_list) == False:
-        print(Fore.RED + "[-] Unable to locate the file/path")
-        sleep(1)
-        exit = str(input("\n" + Fore.GREEN + "[>] " + Fore.RESET + "Press Enter to exit: "))
-
-        if exit == "":
-            header()
-
-    hashed_passwd = str(input(f"{Fore.LIGHTGREEN_EX}[+]{Fore.LIGHTYELLOW_EX} Hashed Password: " + Fore.LIGHTGREEN_EX))
-
-    with open(passwd_list, "r") as file:
-        for line in file.readlines():
-            # MD5
-            if hash_alg == "md5" or hash_alg == "MD5":
-                hash_obj = hashlib.md5(line.strip().encode('utf-8'))
-                password = hash_obj.hexdigest()
-                if password == hashed_passwd:
-                    print(f"\n{Fore.LIGHTGREEN_EX}[+]{Fore.LIGHTYELLOW_EX} Found the MD5 Password: {Fore.LIGHTGREEN_EX + line.strip()}")
-                    sleep(1)
-                    exit = str(input("\n" + Fore.GREEN + "[>] " + Fore.RESET + "Press Enter to exit: "))
-
-                    if exit == "":
-                        header()
-
-            # SHA-1        
-            if hash_alg == "sha1" or hash_alg == "SHA1" or hash_alg == "SHA-1" or hash_alg == "sha-1":
-                hash_obj = hashlib.sha1(line.strip().encode('utf-8'))
-                password = hash_obj.hexdigest()
-                if password == hashed_passwd:
-                    print(f"\n{Fore.LIGHTGREEN_EX}[+]{Fore.LIGHTYELLOW_EX} Found the SHA-1 Password: {Fore.LIGHTGREEN_EX + line.strip()}")
-                    sleep(1)
-                    exit = str(input("\n" + Fore.GREEN + "[>] " + Fore.RESET + "Press Enter to exit: "))
-
-                    if exit == "":
-                        header()
-                        
-            # SHA256       
-            if hash_alg == "sha256" or hash_alg == "SHA256":
-                hash_obj = hashlib.sha256(line.strip().encode('utf-8'))
-                password = hash_obj.hexdigest()
-                if password == hashed_passwd:
-                    print(f"\n{Fore.LIGHTGREEN_EX}[+]{Fore.LIGHTYELLOW_EX} Found the SHA256 Password: {Fore.LIGHTGREEN_EX + line.strip()}")
-                    sleep(1)
-                    exit = str(input("\n" + Fore.GREEN + "[>] " + Fore.RESET + "Press Enter to exit: "))
-
-                    if exit == "":
-                        header()
-
-# Email Scraper                        
-def email_scraper():
-
-    clear()
-
-    
-    print(f"""{Fore.LIGHTCYAN_EX} 
-╔═══╗──────╔╗─╔═══╗
-║╔══╝──────║║─║╔═╗║
-║╚══╦╗╔╦══╦╣║─║╚══╦══╦═╦══╦══╦══╦═╗
-║╔══╣╚╝║╔╗╠╣║─╚══╗║╔═╣╔╣╔╗║╔╗║║═╣╔╝
-║╚══╣║║║╔╗║║╚╗║╚═╝║╚═╣║║╔╗║╚╝║║═╣║
-╚═══╩╩╩╩╝╚╩╩═╝╚═══╩══╩╝╚╝╚╣╔═╩══╩╝
-──────────────────────────║║
-──────────────────────────╚╝
-{Fore.RESET}===================================
-          """)
-
-    target = str(input("[+] URL: "))
-    print("\n")
-    urls = deque([target])
-
-    scraped_urls = set()
-    emails = set()
-
-    count = 0
-
-    try:
-        while len(urls):
-
-            count += 1
-            if count == 100:
-                break
-
-            url = urls.popleft()
-            scraped_urls.add(url)
-
-
-            parts = urllib.parse.urlsplit(url)
-            base_url = "{0.scheme}://{0.netloc}".format(parts)
-
-
-            path = url[:url.rfind("/")+1] if "/" in parts.path else url
-
-
-            print("[%d] Processing %s" % (count, url))
-
-
-            try:
-                response = requests.get(url)
-
-            except (requests.exceptions.MissingSchema, requests.exceptions.ConnectionError):
-                continue
-
-
-            new_emails = set(re.findall(r"[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+", response.text, re.I))
-            emails.update(new_emails)
-
-
-            soup = BeautifulSoup(response.text, features="lxml")
-
-
-            for anchor in soup.find_all("a"):
-                link = anchor.attrs["href"] if "href" in anchor.attrs else ""
-                if link.startswith("/"):
-                    link = base_url + link
-                elif not link.startswith("http"):
-                    link = path + link
-                if not link in urls and not link in scraped_urls:
-                    urls.append(link)
-
-
-
-    except KeyboardInterrupt:
-        print("[-] Exited the program")
-
-    print("\n")
-
-    print(Fore.LIGHTGREEN_EX + "[!] Found Emails")
-
-    for mail in emails:
-        print(f"[+] {mail}")                        
-
-    sleep(1)
-    exit = str(input("\n" + Fore.GREEN + "[>] " + Fore.RESET + "Press Enter to exit: "))
-
-    if exit == "":
-        header()
-    
 # Credits
 def credits():
 
