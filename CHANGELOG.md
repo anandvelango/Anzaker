@@ -8,5 +8,5 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Changed the port scanner:
-  - added multithreading
+  - multithreading to make the program run much faster
   - option to write the scan results in a .txt file
