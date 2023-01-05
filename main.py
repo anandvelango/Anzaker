@@ -210,12 +210,19 @@ def portscanner():
         num_ports = int(input(f"{Fore.LIGHTYELLOW_EX}[+]{Fore.RESET} Max Port Range (e.g. 1024): "))
         num_threads = int(input(f"{Fore.LIGHTYELLOW_EX}[+]{Fore.RESET} Threads (100-200 recommended): "))
 
+        try:
+          host = socket.gethostbyname(target)
+        except socket.gaierror:
+          print("--------------------------------------------------------")
+          print(f"{Fore.LIGHTRED_EX}[-]{Fore.RESET} Host not found")
+          print("--------------------------------------------------------")
+          sys.exit(1)
+        
         print("--------------------------------------------------------")
         print(f"{Fore.LIGHTYELLOW_EX}[+]{Fore.RESET} Scanning {target} at %s" % (date.strftime("%Y-%m-%d %H:%M")))
         print(f"{Fore.LIGHTYELLOW_EX}[>]{Fore.RESET} Press CTRL+C to cancel the program")
         print("--------------------------------------------------------")
 
-        host = socket.gethostbyname(target)
         start_duration = time.time()
 
         for x in range(num_threads):
@@ -236,6 +243,7 @@ def portscanner():
         print(f"{Fore.LIGHTYELLOW_EX}[>]{Fore.RESET} Total duration: {duration}s")
         print(f"{Fore.LIGHTYELLOW_EX}[>]{Fore.RESET} {len(port_list)} open port(s) found")
         print("--------------------------------------------------------")
+        time.sleep(1)
         results = input(f"{Fore.LIGHTYELLOW_EX}[+]{Fore.RESET} Write the port scan results to a file(y/n)?: ")
         if results == "n":
             print("========================================================")
